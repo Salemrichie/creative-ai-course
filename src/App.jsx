@@ -1,8 +1,12 @@
 import { useState } from "react";
 import StatsCard from "./components/StatsCard";
+import WeekProgress from "./components/WeekProgress";
+import DarkModeToggle from "./components/DarkModeToggle";
+import HelpModal from "./components/HelpModal";
 
 export default function App() {
   const [page, setPage] = useState("home");
+  const [showHelp, setShowHelp] = useState(false);
 
   const weeks = [
     {
@@ -56,7 +60,7 @@ export default function App() {
     // الصفحة الرئيسية
     if (page === "home") {
       return (
-        <section className="bg-white rounded-2xl shadow-xl p-8 border border-slate-200 text-center max-w-3xl mx-auto">
+        <section className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 text-center max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold text-indigo-600 mb-6">مرحباً بك في المسار التجريبي</h2>
           <p className="text-lg text-slate-700 leading-relaxed mb-8">
             هذا مسار تعليمي تجريبي لتعلم كيفية استخدام الذكاء الاصطناعي في الكتابة الإبداعية، بدون أي هدف ربحي.
@@ -72,6 +76,7 @@ export default function App() {
           <div className="grid md:grid-cols-2 gap-6 mt-10">
             {[
               { key: "syllabus", title: "الهيكل الأسبوعي", icon: "📅" },
+              { key: "progress", title: "تتبع التقدم", icon: "📈" },
               { key: "project", title: "المشروع النهائي", icon: "🏁" },
               { key: "resources", title: "الموارد", icon: "📦" },
               { key: "about", title: "عن المسار", icon: "ℹ️" },
@@ -242,6 +247,71 @@ export default function App() {
       );
     }
 
+    // صفحة تتبع التقدم
+    if (page === "progress") {
+      return (
+        <section className="bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
+          <h2 className="text-3xl font-bold text-indigo-600 mb-6 flex items-center justify-between">
+            <span>تتبع التقدم</span>
+            <button
+              onClick={() => setPage("home")}
+              className="text-sm bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-full"
+            >
+              العودة
+            </button>
+          </h2>
+          
+          {/* نظرة عامة على التقدم */}
+          <div className="mb-8">
+            <h3 className="text-xl font-bold text-slate-800 mb-4">نظرة عامة</h3>
+            <div className="grid md:grid-cols-3 gap-4">
+              <StatsCard icon="✅" title="المكتمل" value="1" subtitle="أسبوع واحد" color="green" />
+              <StatsCard icon="⏳" title="الحالي" value="2" subtitle="الأسبوع الثاني" color="indigo" />
+              <StatsCard icon="📊" title="النسبة" value="25%" subtitle="من المسار" color="blue" />
+            </div>
+          </div>
+
+          {/* تقدم كل أسبوع */}
+          <div>
+            <h3 className="text-xl font-bold text-slate-800 mb-4">تقدم الأسابيع</h3>
+            <div className="grid md:grid-cols-2 gap-4">
+              <WeekProgress 
+                weekNumber={1} 
+                isCompleted={true} 
+                title="إتقان أدوات الكتابة بالذكاء الاصطناعي" 
+              />
+              <WeekProgress 
+                weekNumber={2} 
+                isCurrent={true} 
+                title="أنواع المحتوى الإبداعي" 
+              />
+              <WeekProgress 
+                weekNumber={3} 
+                title="الأتمتة وإنتاج المحتوى" 
+              />
+              <WeekProgress 
+                weekNumber={4} 
+                title="بناء المشروع الشخصي" 
+              />
+            </div>
+          </div>
+
+          {/* رسالة تشجيعية */}
+          <div className="mt-8 bg-gradient-to-r from-green-50 to-indigo-50 p-6 rounded-xl border border-green-200">
+            <h3 className="font-bold text-green-800 mb-2">🌟 أحسنت!</h3>
+            <p className="text-green-700">
+              لقد أكملت الأسبوع الأول بنجاح. استمر في العمل الرائع وستصل إلى أهدافك قريباً!
+            </p>
+            <div className="mt-4">
+              <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg transition transform hover:scale-105">
+                🎯 متابعة الأسبوع الثاني
+              </button>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
     // عن المسار
     if (page === "about") {
       return (
@@ -277,15 +347,29 @@ export default function App() {
   return (
     <div
       dir="rtl"
-      className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 text-slate-800"
+      className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900 text-slate-800 dark:text-slate-200 transition-colors duration-300"
     >
       {/* Header */}
-      <header className="bg-white shadow-lg border-b-4 border-indigo-500">
-        <div className="max-w-6xl mx-auto px-6 py-6 text-center">
-          <h1 className="text-3xl font-extrabold text-indigo-700">
-            الكاتب الإبداعي بالذكاء الاصطناعي
-          </h1>
-          <p className="text-lg text-slate-600">مسار تدريبي تجريبي — غير ربحي</p>
+      <header className="bg-white dark:bg-slate-800 shadow-lg border-b-4 border-indigo-500">
+        <div className="max-w-6xl mx-auto px-6 py-6">
+          <div className="flex justify-between items-center">
+            <div className="text-center flex-1">
+              <h1 className="text-3xl font-extrabold text-indigo-700 dark:text-indigo-400">
+                الكاتب الإبداعي بالذكاء الاصطناعي
+              </h1>
+              <p className="text-lg text-slate-600 dark:text-slate-300">مسار تدريبي تجريبي — غير ربحي</p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowHelp(true)}
+                className="p-2 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 transition-all duration-300 transform hover:scale-105"
+                aria-label="المساعدة"
+              >
+                <span className="text-xl">🆘</span>
+              </button>
+              <DarkModeToggle />
+            </div>
+          </div>
         </div>
       </header>
 
@@ -295,6 +379,7 @@ export default function App() {
           {[
             { key: "home", label: "الرئيسية" },
             { key: "syllabus", label: "الهيكل" },
+            { key: "progress", label: "التقدم" },
             { key: "project", label: "المشروع" },
             { key: "resources", label: "الموارد" },
             { key: "about", label: "عن المسار" },
@@ -330,6 +415,9 @@ export default function App() {
           </p>
         </div>
       </footer>
+
+      {/* Help Modal */}
+      <HelpModal isOpen={showHelp} onClose={() => setShowHelp(false)} />
     </div>
   );
 }
